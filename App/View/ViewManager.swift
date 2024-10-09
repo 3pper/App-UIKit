@@ -14,6 +14,10 @@ class ViewManager {
     private let viewServise = ViewService.shared
     private var headerStack = UIStackView()
     
+    lazy private var width: CGFloat = {
+        return view.frame.width/2 - 40
+    }()
+    
     init(controller: UIViewController, view: UIView) {
         self.controller = controller
         self.view = view
@@ -39,9 +43,7 @@ class ViewManager {
         }
         
         let headerBtn = {
-            let btn = UIButton(primaryAction: UIAction(handler: { _ in
-                print(1)
-            }))
+            let btn = UIButton(primaryAction: nil)
             btn.translatesAutoresizingMaskIntoConstraints = false
             btn.widthAnchor.constraint(equalToConstant: 31).isActive = true
             btn.heightAnchor.constraint(equalToConstant: 31).isActive = true
@@ -52,7 +54,7 @@ class ViewManager {
             
             btn.clipsToBounds = true
             
-            var btnImage: UIImageView = {
+            let btnImage: UIImageView = {
                 let img = UIImageView()
                 img.image = UIImage(systemName: "magnifyingglass")
                 img.translatesAutoresizingMaskIntoConstraints = false
@@ -83,6 +85,79 @@ class ViewManager {
             headerStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 25),
             headerStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -25)
         ])
+        
+    }
+    
+    func createCards(){
+        let tiktokCard = createLongCardContect(
+            for: viewServise.createCardView(gradientColor: "#58CFEFFF", width: width),
+            image: .tiktok,
+            title: "TikTok\nads",
+            rate: 4.9,
+            views: 1234)
+        
+        view.addSubview(tiktokCard)
+        
+        tiktokCard.topAnchor.constraint(equalTo: headerStack.bottomAnchor, constant: 33).isActive = true
+        tiktokCard.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 25).isActive = true
+    }
+    func createLongCardContect(for item: UIView, image: UIImage, title: String, rate: Float, views: Int) -> UIView {
+        let cardImage = viewServise.createCardImage(image: image)
+        let cardTitle = viewServise.createCardTitle(title: title)
+        let rateStack = viewServise.createRateStack(reate: rate)
+        let viewsStack = viewServise.getViewLabel(views: views)
+        
+        lazy var topStack = {
+            let stack = UIStackView()
+            stack.axis = .vertical
+            stack.alignment = .leading
+            stack.spacing = 12
+            stack.addArrangedSubview(cardImage)
+            stack.addArrangedSubview(cardTitle)
+            
+            return stack
+        }()
+        
+        lazy var bottomStack = {
+            let stack = UIStackView()
+            stack.axis = .vertical
+            stack.alignment = .leading
+            stack.spacing = 2
+            stack.addArrangedSubview(rateStack)
+            stack.addArrangedSubview(viewsStack)
+            
+            return stack
+            
+        }()
+        
+        let mainStack = {
+            let stack = UIStackView()
+            stack.axis = .vertical
+            stack.alignment = .leading
+            stack.spacing = 21
+            stack.translatesAutoresizingMaskIntoConstraints = false
+            
+            stack.addArrangedSubview(topStack)
+            stack.addArrangedSubview(bottomStack)
+            
+            
+            return stack
+        }()
+        
+        item.addSubview(mainStack)
+        
+        NSLayoutConstraint.activate([
+            mainStack.topAnchor.constraint(equalTo: item.topAnchor, constant: 25),
+            mainStack.leadingAnchor.constraint(equalTo: item.leadingAnchor, constant: 25),
+            mainStack.trailingAnchor.constraint(equalTo: item.trailingAnchor, constant: -25),
+            mainStack.bottomAnchor.constraint(equalTo: item.bottomAnchor, constant: -25),
+        ])
+        
+        return item
+        
+    }
+    
+    func createShortCardContent(){
         
     }
 }
